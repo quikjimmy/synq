@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Synq Operator",
+    "slug": "synq-operator-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#0057FF"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.synqai.operator",
+      "infoPlist": {
+        "NFCReaderUsageDescription": "Used to simulate RFID reader taps for the manifest demo."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0057FF"
+      },
+      "package": "com.synqai.operator",
+      "permissions": ["android.permission.NFC"]
+    },
+    "plugins": ["expo-secure-store", "expo-nfc"]
+  }
+}
