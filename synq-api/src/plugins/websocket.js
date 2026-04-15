@@ -1,7 +1,5 @@
 'use strict';
 
-const fp = require('fastify-plugin');
-
 /**
  * Registers the WebSocket route and exposes `fastify.broadcastManifestUpdate`.
  *
