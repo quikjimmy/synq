@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "Synq Guest",
+    "slug": "synq-guest-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0057FF"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "ai.synq.guest",
+      "infoPlist": {
+        "NFCReaderUsageDescription": "Synq uses NFC to link your wristband to your guest profile."
+      },
+      "entitlements": {
+        "com.apple.developer.nfc.readersession.formats": ["TAG", "NDEF"]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0057FF"
+      },
+      "package": "ai.synq.guest",
+      "permissions": ["android.permission.NFC", "android.permission.VIBRATE"]
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#0057FF",
+          "sounds": []
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "synq-guest-app"
+      }
+    }
+  }
+}
