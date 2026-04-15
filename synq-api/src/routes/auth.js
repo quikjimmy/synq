@@ -66,6 +66,24 @@ async function authRoutes(fastify) {
     return reply.code(201).send({ token, guest });
   });
 
+  // Guest wristband link (PATCH /guests/me/wristband)
+  fastify.patch(
+    '/guests/me/wristband',
+    { preHandler: fastify.authenticate },
+    async (req, reply) => {
+      const { rfid_uuid } = req.body || {};
+      if (!rfid_uuid) return reply.code(400).send({ error: 'rfid_uuid required' });
+      const guestId = req.user.sub;
+      const { rows } = await pool.query(
+        `UPDATE guests SET rfid_uuid = $1 WHERE id = $2
+         RETURNING id, email, name, dob, emergency_contact, rfid_uuid`,
+        [rfid_uuid, guestId],
+      );
+      if (!rows[0]) return reply.code(404).send({ error: 'Guest not found' });
+      return rows[0];
+    },
+  );
+
   // Guest login
   fastify.post('/auth/guest/login', async (req, reply) => {
     const { email, password } = req.body;

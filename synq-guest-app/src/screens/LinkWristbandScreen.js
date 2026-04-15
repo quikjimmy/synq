@@ -98,7 +98,7 @@ export default function LinkWristbandScreen({ navigation, route }) {
       // store the UUID locally so the operator app can still display it.
       const token = await SecureStore.getItemAsync('synq_guest_token');
       const res = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000'}/guests/me/wristband`,
+        `${process.env.EXPO_PUBLIC_API_URL || 'http://72.62.128.211:3200'}/guests/me/wristband`,
         {
           method: 'PATCH',
           headers: {

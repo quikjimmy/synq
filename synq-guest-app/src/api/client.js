@@ -6,7 +6,7 @@ import * as SecureStore from 'expo-secure-store';
 // During local development, set EXPO_PUBLIC_API_URL in a .env file.
 const BASE_URL =
   process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, '') ||
-  'http://localhost:3000';
+  'http://72.62.128.211:3200';
 
 const WS_BASE_URL = BASE_URL.replace(/^http/, 'ws');
 
