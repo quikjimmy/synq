@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: synq
+      POSTGRES_USER: synq
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-synqdemopw}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U synq -d synq"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3200:3200"
+    environment:
+      DATABASE_URL: postgresql://synq:${POSTGRES_PASSWORD:-synqdemopw}@db:5432/synq
+      JWT_SECRET: ${JWT_SECRET:-synq-demo-secret-change-me}
+      PORT: 3200
+      NODE_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
