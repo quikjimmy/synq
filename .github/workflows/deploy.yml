@@ -36,6 +36,9 @@ jobs:
               echo "Created .env with random JWT_SECRET"
             fi
 
+            # Stop existing containers cleanly before rebuild
+            docker compose down --remove-orphans 2>/dev/null || true
+
             # Build and restart
             docker compose up -d --build
 
