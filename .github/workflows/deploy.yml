@@ -43,34 +43,34 @@ jobs:
             # Build and restart (host port 3201 -> container port 3200)
             docker compose up -d --build
 
-            # Wait for API container to become healthy (healthcheck polls /health every 5s)
-            echo "Waiting for API container to become healthy..."
-            for i in $(seq 1 24); do
-              HEALTH=$(docker inspect --format='{{.State.Health.Status}}' synq-api-api-1 2>/dev/null || echo "missing")
+            # Wait for API to respond on host port 3201 (up to 90s)
+            echo "Waiting for API to respond on :3201..."
+            API_UP=0
+            for i in $(seq 1 18); do
               STATE=$(docker inspect --format='{{.State.Status}}' synq-api-api-1 2>/dev/null || echo "missing")
-              echo "  [$i/24] state=$STATE health=$HEALTH"
-              if [ "$HEALTH" = "healthy" ]; then
-                echo "API container is healthy."
-                break
-              fi
+              echo "  [$i/18] container state=$STATE"
               if [ "$STATE" = "exited" ] || [ "$STATE" = "dead" ]; then
                 echo "=== API container crashed — logs ==="
                 docker compose logs --tail=80 api
                 echo "==================================="
                 exit 1
               fi
-              if [ "$i" = "24" ]; then
-                echo "=== Timed out waiting for healthy — logs ==="
-                docker compose logs --tail=80 api
-                echo "============================================"
-                exit 1
+              if curl -sf http://localhost:3201/health >/dev/null 2>&1; then
+                API_UP=1
+                break
               fi
               sleep 5
             done
 
+            if [ "$API_UP" = "0" ]; then
+              echo "=== API did not respond — logs ==="
+              docker compose logs --tail=80 api
+              echo "=================================="
+              exit 1
+            fi
+
             # Run migrations (idempotent — safe to run every deploy)
             docker compose exec -T api node src/db/migrate.js
 
-            # Final health check
-            curl -sf http://localhost:3201/health || (echo "Health check failed"; docker compose logs --tail=30 api; exit 1)
+            curl -sf http://localhost:3201/health
             echo "Deploy complete — API is healthy on :3201"
