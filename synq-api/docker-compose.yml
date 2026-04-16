@@ -18,7 +18,7 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - "3200:3200"
+      - "3201:3200"
     environment:
       DATABASE_URL: postgresql://synq:${POSTGRES_PASSWORD:-synqdemopw}@db:5432/synq
       JWT_SECRET: ${JWT_SECRET:-synq-demo-secret-change-me}

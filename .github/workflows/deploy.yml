@@ -39,16 +39,13 @@ jobs:
             # Stop existing containers cleanly before rebuild
             docker compose down --remove-orphans 2>/dev/null || true
 
-            # Kill any non-Docker process holding port 3200 (e.g. bare node process)
-            fuser -k 3200/tcp 2>/dev/null || true
-
-            # Build and restart
+            # Build and restart (host port 3201 -> container port 3200)
             docker compose up -d --build
 
             # Run migrations (idempotent — safe to run every deploy)
             docker compose exec -T api node src/db/migrate.js
 
-            # Health check
+            # Health check on host port 3201
             sleep 5
-            curl -sf http://localhost:3200/health || (echo "Health check failed" && exit 1)
-            echo "Deploy complete — API is healthy"
+            curl -sf http://localhost:3201/health || (echo "Health check failed" && exit 1)
+            echo "Deploy complete — API is healthy on :3201"
