@@ -1,0 +1,47 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'synq-api/**'
+      - '.github/workflows/deploy.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+
+            # Clone repo on first deploy, pull on subsequent deploys
+            if [ ! -d "$HOME/synq" ]; then
+              git clone https://github.com/quikjimmy/synq.git "$HOME/synq"
+            else
+              git -C "$HOME/synq" pull origin $(git -C "$HOME/synq" rev-parse --abbrev-ref HEAD)
+            fi
+
+            cd "$HOME/synq/synq-api"
+
+            # Create .env if it doesn't exist yet (first deploy only)
+            if [ ! -f .env ]; then
+              echo "JWT_SECRET=$(openssl rand -hex 32)" > .env
+              echo "Created .env with random JWT_SECRET"
+            fi
+
+            # Build and restart
+            docker compose up -d --build
+
+            # Run migrations (idempotent — safe to run every deploy)
+            docker compose exec -T api node src/db/migrate.js
+
+            # Health check
+            sleep 5
+            curl -sf http://localhost:3200/health || (echo "Health check failed" && exit 1)
+            echo "Deploy complete — API is healthy"
