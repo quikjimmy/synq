@@ -10,11 +10,12 @@ import {
   ActivityIndicator,
   Alert,
   RefreshControl,
+  TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { api, tripWsUrl } from '../api/client';
 import { useWebSocket } from '../hooks/useWebSocket';
-import { getVessel, clearSession } from '../storage/auth';
+import { getVessel, saveVessel, clearSession } from '../storage/auth';
 
 const STATUS_COLORS = {
   pre_board: '#888',
@@ -39,6 +40,8 @@ export default function TripDashboardScreen({ navigation, route }) {
   const [vessel, setVessel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [vesselName, setVesselName] = useState('');
+  const [creatingVessel, setCreatingVessel] = useState(false);
 
   const wsUrl = activeTrip ? tripWsUrl(activeTrip.id) : null;
 
@@ -92,9 +95,29 @@ export default function TripDashboardScreen({ navigation, route }) {
     } catch (_) {}
   }
 
+  async function handleCreateVessel() {
+    const name = vesselName.trim();
+    if (!name) {
+      Alert.alert('Name required', 'Enter a vessel name (e.g. "Island Queen").');
+      return;
+    }
+    setCreatingVessel(true);
+    try {
+      const v = await api.createVessel({ name, capacity: 50 });
+      await saveVessel(v);
+      setVessel(v);
+      setCapacity(v.capacity || 50);
+      setVesselName('');
+    } catch (err) {
+      Alert.alert('Error', err.message);
+    } finally {
+      setCreatingVessel(false);
+    }
+  }
+
   async function handleCreateTrip() {
     if (!vessel) {
-      Alert.alert('No vessel', 'Set up a vessel first in Reader Pairing.');
+      Alert.alert('No vessel', 'Create a vessel first.');
       return;
     }
     try {
@@ -203,15 +226,39 @@ export default function TripDashboardScreen({ navigation, route }) {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.headcountCard}>
-        <Text style={styles.headcountNum}>
-          {headcount} / {capacity || '—'}
-        </Text>
-        <Text style={styles.headcountLabel}>Passengers On Board</Text>
-      </View>
+      {!vessel ? (
+        <View style={styles.setupCard}>
+          <Text style={styles.setupTitle}>Set Up Your Vessel</Text>
+          <TextInput
+            style={styles.setupInput}
+            value={vesselName}
+            onChangeText={setVesselName}
+            placeholder="Vessel name (e.g. Island Queen)"
+            autoCorrect={false}
+          />
+          <TouchableOpacity
+            style={[styles.setupBtn, creatingVessel && styles.btnDisabled]}
+            onPress={handleCreateVessel}
+            disabled={creatingVessel}
+          >
+            {creatingVessel ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.setupBtnText}>Create Vessel</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.headcountCard}>
+          <Text style={styles.headcountNum}>
+            {headcount} / {capacity || '—'}
+          </Text>
+          <Text style={styles.headcountLabel}>Passengers On Board</Text>
+        </View>
+      )}
 
       <View style={styles.actionRow}>
-        {!activeTrip && (
+        {vessel && !activeTrip && (
           <TouchableOpacity style={styles.actionBtn} onPress={handleCreateTrip}>
             <Text style={styles.actionBtnText}>+ Start Trip</Text>
           </TouchableOpacity>
@@ -266,6 +313,35 @@ const styles = StyleSheet.create({
   vesselName: { color: '#fff', fontWeight: '700', fontSize: 17 },
   tripLabel: { color: 'rgba(255,255,255,0.75)', fontSize: 13, marginTop: 2 },
   logoutBtn: { color: 'rgba(255,255,255,0.8)', fontSize: 13, textDecorationLine: 'underline' },
+  setupCard: {
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    marginTop: 16,
+    borderRadius: 14,
+    padding: 20,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+  },
+  setupTitle: { fontSize: 15, fontWeight: '700', color: '#111', marginBottom: 12 },
+  setupInput: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 14,
+    marginBottom: 12,
+    backgroundColor: '#fafafa',
+  },
+  setupBtn: {
+    backgroundColor: '#0057FF',
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  setupBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  btnDisabled: { opacity: 0.6 },
   headcountCard: {
     backgroundColor: '#0057FF',
     marginHorizontal: 16,

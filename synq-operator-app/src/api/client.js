@@ -34,6 +34,11 @@ async function request(method, path, body, authenticated = true) {
 }
 
 export const api = {
+  /** Register a new operator account. Returns { token, operator }. */
+  operatorRegister(payload) {
+    return request('POST', '/auth/operator/register', payload, false);
+  },
+
   /** Log in as operator. Returns { token, operator }. */
   operatorLogin(payload) {
     return request('POST', '/auth/operator/login', payload, false);
