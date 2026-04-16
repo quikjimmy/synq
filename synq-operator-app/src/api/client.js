@@ -4,7 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 
 const BASE_URL =
   process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, '') ||
-  'http://72.62.128.211:3200';
+  'http://72.62.128.211:3201';
 
 const WS_BASE_URL = BASE_URL.replace(/^http/, 'ws');
 
