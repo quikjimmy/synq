@@ -18,6 +18,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          command_timeout: 10m
           script: |
             set -e
 
@@ -41,6 +42,9 @@ jobs:
 
             # Build and restart (host port 3201 -> container port 3200)
             docker compose up -d --build
+
+            # Wait for API container to be ready
+            sleep 8
 
             # Run migrations (idempotent — safe to run every deploy)
             docker compose exec -T api node src/db/migrate.js
