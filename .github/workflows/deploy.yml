@@ -39,6 +39,9 @@ jobs:
             # Stop existing containers cleanly before rebuild
             docker compose down --remove-orphans 2>/dev/null || true
 
+            # Kill any non-Docker process holding port 3200 (e.g. bare node process)
+            fuser -k 3200/tcp 2>/dev/null || true
+
             # Build and restart
             docker compose up -d --build
 
