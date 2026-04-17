@@ -20,8 +20,8 @@ import { api } from '../api/client';
 // NFC is hardware-dependent; gracefully degrade if not available.
 let NfcManager, NfcTech, Ndef;
 try {
-  const nfc = require('expo-nfc');
-  NfcManager = nfc.NfcManager;
+  const nfc = require('react-native-nfc-manager');
+  NfcManager = nfc.default;
   NfcTech = nfc.NfcTech;
   Ndef = nfc.Ndef;
 } catch (_) {

@@ -30,6 +30,8 @@
       "permissions": ["android.permission.NFC", "android.permission.VIBRATE"]
     },
     "plugins": [
+      "expo-secure-store",
+      "react-native-nfc-manager",
       [
         "expo-notifications",
         {

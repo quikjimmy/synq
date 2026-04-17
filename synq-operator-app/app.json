@@ -23,6 +23,11 @@
       "package": "com.synqai.operator",
       "permissions": ["android.permission.NFC"]
     },
-    "plugins": ["expo-secure-store"]
+    "plugins": ["expo-secure-store", "react-native-nfc-manager"],
+    "extra": {
+      "eas": {
+        "projectId": "synq-operator-app"
+      }
+    }
   }
 }
