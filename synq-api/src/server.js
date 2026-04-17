@@ -38,8 +38,9 @@ async function build() {
   await fastify.register(require('./routes/rfid'));
   await fastify.register(require('./routes/manifest'));
 
-  // Health check
+  // Health + root
   fastify.get('/health', async () => ({ ok: true, ts: new Date().toISOString() }));
+  fastify.get('/', async () => ({ service: 'synq-api', status: 'ok', version: '1.0.0', docs: '/health' }));
 
   return fastify;
 }
