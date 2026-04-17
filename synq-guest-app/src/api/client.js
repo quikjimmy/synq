@@ -6,7 +6,7 @@ import * as SecureStore from 'expo-secure-store';
 // During local development, set EXPO_PUBLIC_API_URL in a .env file.
 const BASE_URL =
   process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, '') ||
-  'http://72.62.128.211:3201';
+  'https://synq-production-c788.up.railway.app';
 
 const WS_BASE_URL = BASE_URL.replace(/^http/, 'ws');
 
