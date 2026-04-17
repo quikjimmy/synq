@@ -23,6 +23,6 @@
       "package": "com.synqai.operator",
       "permissions": ["android.permission.NFC"]
     },
-    "plugins": ["expo-secure-store", "expo-nfc"]
+    "plugins": ["expo-secure-store"]
   }
 }
