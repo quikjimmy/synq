@@ -21,13 +21,19 @@
         "backgroundColor": "#0057FF"
       },
       "package": "com.synqai.operator",
-      "permissions": ["android.permission.NFC"]
+      "permissions": [
+        "android.permission.NFC"
+      ]
     },
-    "plugins": ["expo-secure-store", "react-native-nfc-manager"],
+    "plugins": [
+      "expo-secure-store",
+      "react-native-nfc-manager"
+    ],
     "extra": {
       "eas": {
-        "projectId": "synq-operator-app"
+        "projectId": "546cd2e6-8c45-4f47-9fa6-d8f6543ce0c3"
       }
-    }
+    },
+    "owner": "jamestootill"
   }
 }

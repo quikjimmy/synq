@@ -18,7 +18,10 @@
         "NFCReaderUsageDescription": "Synq uses NFC to link your wristband to your guest profile."
       },
       "entitlements": {
-        "com.apple.developer.nfc.readersession.formats": ["TAG", "NDEF"]
+        "com.apple.developer.nfc.readersession.formats": [
+          "TAG",
+          "NDEF"
+        ]
       }
     },
     "android": {
@@ -27,7 +30,10 @@
         "backgroundColor": "#0057FF"
       },
       "package": "ai.synq.guest",
-      "permissions": ["android.permission.NFC", "android.permission.VIBRATE"]
+      "permissions": [
+        "android.permission.NFC",
+        "android.permission.VIBRATE"
+      ]
     },
     "plugins": [
       "expo-secure-store",
@@ -43,8 +49,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "synq-guest-app"
+        "projectId": "7c1c4d3c-73b0-4c03-b4a3-e81f7d25aeec"
       }
-    }
+    },
+    "owner": "jamestootill"
   }
 }
