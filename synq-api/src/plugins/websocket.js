@@ -40,7 +40,6 @@ async function websocketPlugin(fastify) {
   });
 }
 
-// fastify-plugin is not in package.json — inline the wrapper
-module.exports = async function registerWs(fastify) {
-  await websocketPlugin(fastify);
-};
+// fastify-plugin removes scope encapsulation so fastify.decorate leaks to parent
+const fp = require('fastify-plugin');
+module.exports = fp(websocketPlugin);
